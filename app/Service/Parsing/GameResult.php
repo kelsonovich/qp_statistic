@@ -7,6 +7,7 @@ use App\Helper\EnumHelper;
 use App\Models\Games;
 use App\Models\Result;
 use App\Models\Teams;
+use Illuminate\Support\Facades\DB;
 
 class GameResult
 {
@@ -15,6 +16,7 @@ class GameResult
     private static array $body = [];
 
     private static array $headConfig = [];
+    private static Games $game;
 
     public static function start (Games $game, object $page): bool
     {
@@ -22,6 +24,8 @@ class GameResult
         self::$head = [];
         self::$body = [];
         self::$headConfig = [];
+
+        self::$game = $game;
 
         self::setTable($page);
 
@@ -85,8 +89,11 @@ class GameResult
 
             $result['game_id'] = $games->id;
             $result['place']   = ($place + 1);
-
             foreach ($row as $key => $cell) {
+                if (! array_key_exists($key, self::$head)) {
+                    continue;
+                }
+
                 $type = self::$headConfig[self::$head[$key]];
 
                 if ($type === '') {
@@ -94,11 +101,15 @@ class GameResult
                 } elseif ($type === RoundTypeEnum::TEAM) {
                     $result['team_id'] = Teams::firstOrCreate(['title' => $cell])->id;
                 } elseif ($type === RoundTypeEnum::ROUND) {
-                    $result["round_{$countRound}"] = $cell;
+                    $cell = self::clear($cell);
+
+                    $result["round_{$countRound}"] = (float) $cell ?? 0;
 
                     $countRound++;
                 } elseif ($type === RoundTypeEnum::TOTALS) {
-                    $result['total'] = $cell;
+                    $cell = self::clear($cell);
+
+                    $result['total'] = $cell ?? 0;
                 }
             }
 
@@ -108,8 +119,23 @@ class GameResult
 
     private static function create(): void
     {
-        foreach (self::$results as $result) {
-            Result::create($result);
+        DB::beginTransaction();
+        try {
+            foreach (self::$results as $result) {
+                Result::create($result);
+            }
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
         }
+    }
+
+    private static function clear(mixed $cell): mixed
+    {
+        $cell = str_replace([',,'], ',', $cell);
+        $cell = str_replace([','], '.', $cell);
+        $cell = str_replace([''], '.', $cell);
+
+        return $cell;
     }
 }

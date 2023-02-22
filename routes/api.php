@@ -21,13 +21,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/test', function () {
-    ini_set('max_execution_time', 0);
-
-    foreach (range (1, 100) as $value) {
-        GameParsingService::start();
-    }
+//    ini_set('max_execution_time', 0);
 //    GameListParsingService::start();
+    $ids[] = GameParsingService::start();
 
-    dd(\App\Enum\GameStatusEnum::cases());
+    $ids = [];
+    foreach (range(1, 100) as $value) {
+    }
+
+    dd(
+        $ids
+    );
 });
 
