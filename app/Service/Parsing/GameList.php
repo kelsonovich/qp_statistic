@@ -2,7 +2,7 @@
 
 namespace App\Service\Parsing;
 
-use App\Models\Games;
+use App\Models\Game;
 use voku\helper\HtmlDomParser;
 
 class GameList
@@ -20,7 +20,7 @@ class GameList
 
             $gameNumber = (int) substr($link, (stripos($link, '=') + 1), strlen($link));
 
-            if (Games::isExists($gameNumber)) {
+            if (Game::isExists($gameNumber)) {
                 return true;
             }
 

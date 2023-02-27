@@ -3,7 +3,7 @@
 namespace App\Service\Parsing;
 
 use App\Enum\GameStatusEnum;
-use App\Models\Games;
+use App\Models\Game;
 use App\Models\Thematics;
 use PHPUnit\Exception;
 use voku\helper\HtmlDomParser;
@@ -15,7 +15,7 @@ class GameParsingService
 
     public static function start (): null
     {
-        $game = Games::getNextForParsing();
+        $game = Game::getNextForParsing();
 
         if (! $game) {
             return null;
@@ -26,7 +26,7 @@ class GameParsingService
         try {
             $page = HtmlDomParser::file_get_html(self::$url);
         } catch (\Exception $exception) {
-            Games::setError($game);
+            Game::setError($game);
 
             return null;
         }
@@ -39,7 +39,7 @@ class GameParsingService
             $game->status = ($resultExists) ? GameStatusEnum::FINISHED : GameStatusEnum::WITHOUT_RESULT;
             $game->save();
         } catch (\Exception $exception) {
-            Games::setError($game);
+            Game::setError($game);
 
             return null;
         }

@@ -31,4 +31,14 @@ class Result extends Model
         'round_15',
         'total',
     ];
+
+    public function game(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Game::class);
+    }
+
+    public function team(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Team::class);
+    }
 }

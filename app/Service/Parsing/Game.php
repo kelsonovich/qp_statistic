@@ -3,7 +3,7 @@
 namespace App\Service\Parsing;
 
 use App\Enum\GameStatusEnum;
-use App\Models\Games;
+use App\Models\Game as GameModel;
 
 class Game
 {
@@ -21,7 +21,7 @@ class Game
 
     private static function create (int $number): void
     {
-        Games::create([
+        GameModel::create([
             'title'   => self::$title,
             'package' => self::$package,
             'number'  => $number,

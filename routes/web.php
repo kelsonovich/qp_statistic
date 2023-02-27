@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,37 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [\App\Http\Controllers\Rating\RatingController::class, 'index'])->name('rating-table');
+Route::get('/team/{team}/{thematic}', [\App\Http\Controllers\Team\TeamController::class, 'show'])->name('team-detail');
+
+
+Route::get('/test', function () {
+    ini_set('max_execution_time', 0);
+
+    $games = \App\Models\Game::getInQueueResult();
+
+    foreach ($games as $game) {
+        DB::beginTransaction();
+        try {
+            foreach ($game->results as $result) {
+                $teamRating = \App\Models\Rating::getTeam($result->team_id, $game->thematic_id);
+
+                $teamRating->points += $result->total;
+                $teamRating->games  += 1;
+                $teamRating->wins   += ((int) $result->place === 1) ? 1 : 0;
+                $teamRating->average = round($teamRating->points / $teamRating->games, 2);
+
+                $teamRating->save();
+            }
+
+            \App\Models\Game::setResultFinished($game);
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+
+            \App\Models\Game::setResultError($game);
+        }
+    }
 });
+
+

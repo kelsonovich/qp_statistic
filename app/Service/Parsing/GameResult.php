@@ -4,9 +4,9 @@ namespace App\Service\Parsing;
 
 use App\Enum\Round\RoundTypeEnum;
 use App\Helper\EnumHelper;
-use App\Models\Games;
+use App\Models\Game;
 use App\Models\Result;
-use App\Models\Teams;
+use App\Models\Team;
 use Illuminate\Support\Facades\DB;
 
 class GameResult
@@ -16,9 +16,9 @@ class GameResult
     private static array $body = [];
 
     private static array $headConfig = [];
-    private static Games $game;
+    private static Game $game;
 
-    public static function start (Games $game, object $page): bool
+    public static function start (Game $game, object $page): bool
     {
         self::$results = [];
         self::$head = [];
@@ -81,7 +81,7 @@ class GameResult
         }
     }
 
-    private static function setResults (Games $games): void
+    private static function setResults (Game $games): void
     {
         foreach (self::$body as $place => $row) {
             $countRound = 1;
@@ -99,7 +99,7 @@ class GameResult
                 if ($type === '') {
                     continue;
                 } elseif ($type === RoundTypeEnum::TEAM) {
-                    $result['team_id'] = Teams::firstOrCreate(['title' => $cell])->id;
+                    $result['team_id'] = Team::firstOrCreate(['title' => $cell])->id;
                 } elseif ($type === RoundTypeEnum::ROUND) {
                     $cell = self::clear($cell);
 
