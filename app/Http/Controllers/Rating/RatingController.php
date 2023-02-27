@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Rating;
 
+use App\Helper\GameTypeHelper;
 use App\Models\Rating;
 use App\Models\Thematics;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -15,11 +16,11 @@ class RatingController extends BaseController
 
     public function index(Request $request)
     {
-        $thematics = Thematics::all();
-        $thematicId = $request->get('thematic') ?? $thematics->first()->id;
+        $thematics = GameTypeHelper::getButtons();
+        $thematic = $request->get('thematic') ?? $thematics[0]['value'];
 
-        $teams = Rating::getByThematic($thematicId);
+        $teams = Rating::getByThematic($thematic);
 
-        return view('rating.table', compact('thematics', 'teams'));
+        return view('rating.table', compact('thematics','thematic', 'teams'));
     }
 }

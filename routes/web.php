@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [\App\Http\Controllers\Rating\RatingController::class, 'index'])->name('rating-table');
-Route::get('/team/{team}/{thematic}', [\App\Http\Controllers\Team\TeamController::class, 'show'])->name('team-detail');
+Route::get('/team/{team}/{thematics?}', [\App\Http\Controllers\Team\TeamController::class, 'show'])->name('team-detail');
 
 
 Route::get('/test', function () {

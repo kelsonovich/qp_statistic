@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helper\GameTypeHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,9 +36,9 @@ class Rating extends Model
         return Rating::firstOrCreate(['team_id' => $teamId, 'thematic_id' => $thematicId]);
     }
 
-    public static function getByThematic (mixed $thematicId): \Illuminate\Database\Eloquent\Collection|null
+    public static function getByThematic (mixed $thematic): \Illuminate\Database\Eloquent\Collection|null
     {
-//        return Rating::where('thematic_id', $thematicId)->orderBy('points', 'DESC')->get();
-        return Rating::where('thematic_id', $thematicId)->orderBy('points', 'DESC')->limit(20)->get();
+//        return Rating::whereIn('thematic_id', GameTypeHelper::getThematicIds($thematic))->orderBy('points', 'DESC')->get();
+        return Rating::whereIn('thematic_id', GameTypeHelper::getThematicIds($thematic))->orderBy('points', 'DESC')->limit(50)->get();
     }
 }

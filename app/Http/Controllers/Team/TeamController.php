@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Team;
 
+use App\Helper\GameTypeHelper;
 use App\Models\Rating;
 use App\Models\Result;
 use App\Models\Team;
@@ -15,15 +16,24 @@ class TeamController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function show(Request $request, Team $team, Thematics $thematics)
+    public function show(Request $request, Team $team, string $thematic = null)
     {
         $rating = Rating::where('team_id', $team->id)->get();
 
-        $results = Result::where('team_id', $team->id)->with(['game' => function ($query) use ($thematics) {
-            $query->where('thematic_id', $thematics->id);
-            $query->orderBy('number', 'desc');
-        }])->get();
+        $results = Result::where('team_id', $team->id)->with('game')->get();
 
-        return view('team.show', compact('team', 'thematics', 'rating', 'results'));
+        if ($thematic) {
+            $thematicIds = GameTypeHelper::getThematicIds($thematic);
+            $results = $results->filter(function ($result) use ($thematicIds) {
+                return in_array((int) $result->game->thematic_id, $thematicIds);
+            });
+        }
+
+        $results = $results->sortByDesc(function ($result) {
+            return $result->game->number;
+        })->values()->all();
+
+
+        return view('team.show', compact('team', 'rating', 'results'));
     }
 }
