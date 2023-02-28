@@ -14,10 +14,10 @@ class RatingController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function index(Request $request)
+    public function index(Request $request, string $thematic = null)
     {
         $thematics = GameTypeHelper::getButtons();
-        $thematic = $request->get('thematic') ?? $thematics[0]['value'];
+        $thematic = $thematic ?? $thematics->first()['value'];
 
         $teams = Rating::getByThematic($thematic);
 

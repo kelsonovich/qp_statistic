@@ -5,9 +5,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let url = new URL(window.location.href);
 
-            url.searchParams.set('thematic', value);
+            if (url.pathname === '/') {
+                window.location.href = window.location.href + value;
+            }
 
-            window.location.href = url.toString();
+            let pathname = url.pathname.split('/');
+            pathname[pathname.length - 1] = value;
+
+            window.location.href = pathname.join('/');
         }
     });
 });

@@ -18,7 +18,9 @@ class TeamController extends BaseController
 
     public function show(Request $request, Team $team, string $thematic = null)
     {
-        $rating = Rating::where('team_id', $team->id)->get();
+        $thematics = GameTypeHelper::getButtons();
+
+        $ratings = Rating::where('team_id', $team->id)->get();
 
         $results = Result::where('team_id', $team->id)->with('game')->get();
 
@@ -27,6 +29,29 @@ class TeamController extends BaseController
             $results = $results->filter(function ($result) use ($thematicIds) {
                 return in_array((int) $result->game->thematic_id, $thematicIds);
             });
+
+            $rating = [
+                'games'      => 0,
+                'points'     => 0,
+                'average'    => 0,
+                'wins'       => 0,
+                'percentage' => 0,
+            ];
+
+            foreach ($ratings as $teamRating) {
+                if (in_array($teamRating->thematic_id, $thematicIds)) {
+                    foreach ($rating as $key => &$value) {
+                        $value += (float) $teamRating->$key;
+                    }
+                }
+            }
+
+            if ($rating['games'] > 0) {
+                $rating['percentage'] = round(100 * $rating['wins'] / $rating['games'], 2);
+                $rating['average'] = round($rating['points'] / $rating['games'], 2);
+            }
+
+            $rating = collect($rating);
         }
 
         $results = $results->sortByDesc(function ($result) {
@@ -34,6 +59,6 @@ class TeamController extends BaseController
         })->values()->all();
 
 
-        return view('team.show', compact('team', 'rating', 'results'));
+        return view('team.show', compact('thematics', 'team', 'rating', 'results'));
     }
 }
