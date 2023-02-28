@@ -13,6 +13,7 @@ class GameTypeHelper
         GameTypeEnum::teens->name    => ['Teens'],
         GameTypeEnum::english->name  => ['English, please!'],
         GameTypeEnum::stream->name   => 'стрим',
+        GameTypeEnum::closed->name   => ['Закрытые игры'],
     ];
 
     public static function getThematicIds (string $name): array

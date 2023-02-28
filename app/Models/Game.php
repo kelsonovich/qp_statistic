@@ -23,6 +23,10 @@ class Game extends Model
         'status',
     ];
 
+    public function getPackageTitle (): string
+    {
+        return ($this->package > 0) ? $this->title . ' #' . $this->package : $this->title;
+    }
 
     public static function isExists (int $number): bool
     {
@@ -36,7 +40,7 @@ class Game extends Model
 
     public static function getInQueueResult (): \Illuminate\Database\Eloquent\Collection|null
     {
-        return Game::where('result_status', GameResultStatusEnum::IN_QUEUE)->limit(500)->get();
+        return Game::where('result_status', GameResultStatusEnum::IN_QUEUE)->limit(5000)->get();
     }
 
     public static function getNextWithError (): Game|null

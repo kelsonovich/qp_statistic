@@ -10,7 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             let pathname = url.pathname.split('/');
-            pathname[pathname.length - 1] = value;
+
+            if (pathname.length >= 2) {
+                pathname[pathname.length - 1] = value;
+            }
 
             window.location.href = pathname.join('/');
         }

@@ -13,13 +13,17 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::get('/package', [\App\Http\Controllers\Package\PackageController::class, 'list'])->name('package-list');
+Route::get('/package/{number}', [\App\Http\Controllers\Package\PackageController::class, 'show'])->name('package-detail');
 Route::get('/{thematics?}', [\App\Http\Controllers\Rating\RatingController::class, 'index'])->name('rating-table');
 Route::get('/team/{team}/{thematics?}', [\App\Http\Controllers\Team\TeamController::class, 'show'])->name('team-detail');
+Route::get('/game/{game}', [\App\Http\Controllers\Game\GameController::class, 'show'])->name('game-detail');
 
 
 Route::get('/test', function () {
     ini_set('max_execution_time', 0);
+
+//    \App\Service\Parsing\GameListParsingService::start();
 
     $games = \App\Models\Game::getInQueueResult();
 

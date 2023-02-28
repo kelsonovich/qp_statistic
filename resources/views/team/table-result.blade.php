@@ -17,7 +17,7 @@
         >
             <td>{{ ($key + 1) }}</td>
             <td>
-                <a href="">
+                <a href="{{ route('game-detail', [$result->game->id]) }}">
                     {{ $result->game->title }}
                     @if ($result->game->package > 0)
                         #{{ $result->game->package }}

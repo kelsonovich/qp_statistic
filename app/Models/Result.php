@@ -37,8 +37,8 @@ class Result extends Model
         return $this->belongsTo(Game::class);
     }
 
-    public function team(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function team(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->hasOne(Team::class);
+        return $this->belongsTo(Team::class);
     }
 }

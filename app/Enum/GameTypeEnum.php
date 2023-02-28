@@ -9,4 +9,5 @@ enum GameTypeEnum: string
     case teens =  'Teens';
     case english = 'English, please!';
     case stream = 'Стримы';
+    case closed = 'Закрытые игры';
 }
